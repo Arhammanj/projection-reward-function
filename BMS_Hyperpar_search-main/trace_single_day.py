@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from src.mg_env import MicroGridEnv
 from src.q_agent import QAgent
 
-CKPT = Path('results') / 'best_checkpoint'
+CKPT = Path('results') / 'v1new' / 'best_checkpoint'
 DEFAULT_DAY = 300
 
 
@@ -64,7 +64,7 @@ def run_trace(day: int):
     axs[0].axvline(peak_hour, color='black', linestyle='--', linewidth=1, alpha=0.6,
                    label=f'Peak sell hour {peak_hour}')
     axs[0].set_ylabel('Price')
-    axs[0].set_title(f'Best-checkpoint greedy trace — day {day} (trained on Prices (3).csv)')
+    axs[0].set_title(f'Best-checkpoint greedy trace — day {day} (trained on src/Prices.csv)')
     axs[0].legend(frameon=False)
     axs[0].grid(True, linestyle='--', alpha=0.4)
 
@@ -98,7 +98,8 @@ def run_trace(day: int):
 
     fig.tight_layout()
 
-    out_path = Path('results') / f'trace_day{day}_best.png'
+    out_path = Path('results') / 'v1new' / f'trace_day{day}_best.png'
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(str(out_path), dpi=200)
     print(f'Trace saved to {out_path}')
 

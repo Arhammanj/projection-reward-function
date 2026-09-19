@@ -64,7 +64,8 @@ def greedy_eval(agent, env, n_episodes=10, seed=0):
 # Train
 n_episodes = 5000
 eval_freq = 100
-ckpt_dir = Path('results') / 'best_checkpoint'
+run_dir = Path('results') / 'v1new'
+ckpt_dir = run_dir / 'best_checkpoint'
 print(f"Training for {n_episodes} episodes (epsilon 0.90 -> 0.15 over 10k steps, greedy eval every {eval_freq} eps)...")
 print(f"normalize_state = {agent.normalize_state} | hidden_layers = [256, 256] | best-eval checkpoint dir = {ckpt_dir}")
 rewards, costs = train(agent, env, n_episodes=n_episodes, log_dir=None,
@@ -72,10 +73,10 @@ rewards, costs = train(agent, env, n_episodes=n_episodes, log_dir=None,
                        checkpoint_dir=ckpt_dir)
 
 # Save plot
-out_path = Path('results') / f'reward_cost_{n_episodes}eps.png'
+out_path = run_dir / f'reward_cost_{n_episodes}eps.png'
 out_path.parent.mkdir(parents=True, exist_ok=True)
 fig, axs = plot_reward_cost_curves(rewards, costs, moving_avg_window=50, save_path=str(out_path),
-                                   data_label="Prices (3).csv")
+                                   data_label="src/Prices.csv")
 
 # Overlay greedy eval line on the reward panel
 if len(agent.eval_episodes) > 0:
@@ -98,7 +99,7 @@ if len(agent.profit_per_episode) > 0:
     print(f"Safety violation peak: mean={viols.mean():.4f} max={viols.max():.4f}")
 
     # Save metrics to CSV for later reporting (thesis plots etc.)
-    csv_path = Path('results') / f'profit_safety_{n_episodes}eps.csv'
+    csv_path = run_dir / f'profit_safety_{n_episodes}eps.csv'
     with open(csv_path, 'w') as f:
         f.write("episode,reward,operation_cost,profit,safety_violation\n")
         for i, (r, c, p, v) in enumerate(zip(rewards, costs, agent.profit_per_episode, agent.safety_violation_per_episode)):
