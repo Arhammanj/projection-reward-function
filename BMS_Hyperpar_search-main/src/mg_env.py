@@ -41,11 +41,12 @@ DAYN_EVAL = 365
 
 def _load_default_tou_price():
     # Priority list of candidate real-market price files.
+    # src/Prices.csv (v1 data source) takes priority over the other candidates.
     candidates = [
+        Path(__file__).with_name("Prices.csv"),
         Path(__file__).parent.parent.parent / "Prices (3).csv",
         Path(__file__).parent.parent.parent / "Prices.csv",
         Path(__file__).parent.parent / "Prices (3).csv",
-        Path(__file__).with_name("Prices.csv"),
     ]
 
     for price_path in candidates:

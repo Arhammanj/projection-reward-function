@@ -15,10 +15,12 @@ env = MicroGridEnv(
 	reward_mode="pure_profit",
 )
 
-# Epsilon schedule tuned to training length:
-# 3000 episodes x 24 steps = 72,000 steps total; decaying over 54,000 steps
-# reaches epsilon_end around episode 2250, leaving ~750 episodes of near-greedy
-# behavior to inspect the converged policy.
+# v1 hyperparameter set:
+# - nn_hidden_layers=[256, 256]
+# - memory_size=10_000, n_steps_warm_up_memory=1_000
+# - freq_steps_update_target=10 (target net synced every 10 steps)
+# - freq_steps_train=16, n_gradient_steps=16 (16 Adam updates every 16 env steps)
+# - epsilon: 0.90 -> 0.15 over 10,000 steps
 #
 # normalize_state=True: raw features (price window [-0.91, 1], time-step [0,1],
 # SOC/max_soc [0,1.25]) have mismatched scales. Normalizing puts them on a
@@ -26,8 +28,21 @@ env = MicroGridEnv(
 #
 # reward_mode="pure_profit" + the Battery safety shield: reward is profit only,
 # violations are impossible by construction (SOC clipped to the safe band).
-agent = QAgent(env, steps_epsilon_decay=54000, normalize_state=True,
-               nn_hidden_layers=[256, 256])
+#
+# optimizer is fixed to Adam inside QAgent (src/q_agent.py), not configurable here.
+agent = QAgent(
+    env,
+    nn_hidden_layers=[256, 256],
+    memory_size=10_000,
+    n_steps_warm_up_memory=1_000,
+    freq_steps_update_target=10,
+    freq_steps_train=16,
+    n_gradient_steps=16,
+    epsilon_start=0.90,
+    epsilon_end=0.15,
+    steps_epsilon_decay=10_000,
+    normalize_state=True,
+)
 
 # Greedy evaluation callback (epsilon forced to 0). Re-seeding each checkpoint
 # means every eval evaluates the same set of days, so points are comparable.
@@ -50,7 +65,7 @@ def greedy_eval(agent, env, n_episodes=10, seed=0):
 n_episodes = 5000
 eval_freq = 100
 ckpt_dir = Path('results') / 'best_checkpoint'
-print(f"Training for {n_episodes} episodes (epsilon decays over 54k steps, greedy eval every {eval_freq} eps)...")
+print(f"Training for {n_episodes} episodes (epsilon 0.90 -> 0.15 over 10k steps, greedy eval every {eval_freq} eps)...")
 print(f"normalize_state = {agent.normalize_state} | hidden_layers = [256, 256] | best-eval checkpoint dir = {ckpt_dir}")
 rewards, costs = train(agent, env, n_episodes=n_episodes, log_dir=None,
                        eval_fn=greedy_eval, freq_episodes_eval=eval_freq,
