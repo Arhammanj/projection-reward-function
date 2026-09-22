@@ -1,0 +1,23 @@
+{
+  "run": "Reward v2 (projection-aware), 5000 episodes, test days 300-364",
+  "source_files": [
+    "saved_eval_5000/profit_traces.npz",
+    "v2_daily_profit_5000_STYLED.png",
+    "v2_day310_5000_STYLED.png"
+  ],
+  "n_test_days": 65,
+  "total_profit_gbp": 6753.76,
+  "avg_profit_per_day_gbp": 103.9,
+  "std_profit_per_day_gbp_population_ddof0": 33.95,
+  "std_profit_per_day_gbp_sample_ddof1": 34.21,
+  "best_day": {
+    "day_number": 360,
+    "profit_gbp": 186.72
+  },
+  "worst_day": {
+    "day_number": 316,
+    "profit_gbp": 37.1
+  },
+  "energy_sold_kwh": 33531.07,
+  "energy_bought_kwh": 26332.22
+}

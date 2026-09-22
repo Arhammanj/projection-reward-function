@@ -1,0 +1,47 @@
+ENERGY TRADING PROFIT REPORT — TEST DATA (actual prices only)
+=============================================================
+Date of analysis : 2026-08-08
+Data source      : saved_eval/profit_traces.npz (existing test results, no retraining)
+Agent            : saved_eval/model (latest trained+tested agent, reward function = projection)
+Test period      : days 300-364 (65 days, 1560 timesteps)
+Seed             : 0 (pure exploitation, epsilon = 0)
+Currency         : EUR (price data is the European EPEX wholesale market;
+                   scripts label it GBP due to a unit-conversion assumption)
+
+Profit formula (fair comparison):
+    Profit = Sell_price * P_dch - Buy_price * P_ch
+    (uses only the charge/discharge power results of the testing data)
+
+Formula verification:
+    max |profit - (sell_price*p_dch - buy_price*p_ch)| = 4.38e-06  (OK)
+
+----------------------------------------------------------
+1) TRADING PROFIT (actual prices only)
+----------------------------------------------------------
+Total profit       : EUR 6,605.01
+Average profit     : EUR 101.62 /day
+Std deviation      : EUR 35.18 /day
+Best day           : EUR 207.13  (day 339)
+Worst day          : EUR 33.25   (day 316)
+Energy sold        : 31,220.04 kWh
+Energy bought      : 24,013.10 kWh
+
+----------------------------------------------------------
+2) CROSS-CHECK vs ENV ACCOUNTING (same run)
+----------------------------------------------------------
+Real-price profit (this report) : EUR 6,605.01
+Env operation-cost profit       : EUR 6,564.51   (diff = 0.01 * degradation cost)
+Env reward total                : EUR 6,335.50   (diff = gap penalty + price-alignment bonus)
+
+----------------------------------------------------------
+3) COMPARISON TABLE (same profit equation per reward function)
+----------------------------------------------------------
+reward function      Total profit (EUR)   Avg profit (EUR/day)
+--------------------------------------------------------------
+projection                    6,605.01                101.62
+--------------------------------------------------------------
+Note: only the 'projection' reward function has saved test-day traces in
+saved_eval/profit_traces.npz. To add other reward functions, save their
+per-timestep charge/discharge powers + prices for the same test days 300-364
+(and same seed) into the same format, then recompute with the identical
+profit equation above for a fair comparison.

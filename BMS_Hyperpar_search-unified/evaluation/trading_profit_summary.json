@@ -1,0 +1,12 @@
+{
+  "n_test_days": 65,
+  "total_profit": 6753.7616985325685,
+  "avg_daily_profit": 103.90402613127029,
+  "std_daily_profit": 33.948241433414736,
+  "best_daily_profit": 186.72364636837756,
+  "best_day": 360,
+  "worst_daily_profit": 37.10424582473891,
+  "worst_day": 316,
+  "total_energy_discharged_kwh": 33531.07320301992,
+  "total_energy_charged_kwh": 26332.216793273226
+}
