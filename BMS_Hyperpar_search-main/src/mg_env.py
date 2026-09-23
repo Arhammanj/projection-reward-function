@@ -100,8 +100,8 @@ DEFAULT_EFFICIENCY = 1       # charge/discharge efficiency = 1
 DEFAULT_DEGRADATION = 0.001      # battery degradation coefficent = 0
 DEFAULT_PEN_SOC = 500        # SOC penalty set to 50000
 DEFAULT_SOC_TARGET = 0.6
-DEFAULT_BOUNDARY_SOC_LOW = 0.3
-DEFAULT_BOUNDARY_SOC_HIGH = 0.7
+DEFAULT_BOUNDARY_SOC_LOW = DEFAULT_MIN_SOC
+DEFAULT_BOUNDARY_SOC_HIGH = DEFAULT_MAX_SOC
 DEFAULT_SOC_DEADBAND = 0.05
 DEFAULT_ALPHA_SOC_STABILITY = 2.5
 DEFAULT_BETA_BOUNDARY_SAFETY = 2.0
@@ -190,7 +190,7 @@ ACTIONS = [i for i in range(-80, 90, 10)]    # [-80, -70, ..., 70, 80]
 class Battery():
     '''simulate a simple battery here'''
     def __init__(self,capacity, max_soc, min_soc, efficiency, degradation,
-                 safe_soc_low=0.3, safe_soc_high=0.7):
+                 safe_soc_low=DEFAULT_MIN_SOC, safe_soc_high=DEFAULT_MAX_SOC):
         self.capacity=capacity
         self.max_soc=max_soc
         # self.initial_capacity=parameters['initial_capacity']

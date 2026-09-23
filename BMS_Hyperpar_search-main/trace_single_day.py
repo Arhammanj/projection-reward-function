@@ -69,11 +69,14 @@ def run_trace(day: int):
     axs[0].grid(True, linestyle='--', alpha=0.4)
 
     # 2) SOC
+    safe_low, safe_high = env.battery.safe_soc_low, env.battery.safe_soc_high
+    hard_min, hard_max = env.battery.min_soc, env.battery.max_soc
     axs[1].plot(hours, soc, color='seagreen', linewidth=2, marker='o', markersize=3)
-    axs[1].axhline(0.7, color='tomato', linestyle='--', linewidth=1, alpha=0.7, label='Boundary high (0.7)')
-    axs[1].axhline(0.3, color='tomato', linestyle='--', linewidth=1, alpha=0.7, label='Boundary low (0.3)')
-    axs[1].axhline(0.8, color='black', linestyle=':', linewidth=1, alpha=0.5, label='Hard max (0.8)')
-    axs[1].axhline(0.2, color='black', linestyle=':', linewidth=1, alpha=0.5, label='Hard min (0.2)')
+    if (safe_low, safe_high) != (hard_min, hard_max):
+        axs[1].axhline(safe_high, color='tomato', linestyle='--', linewidth=1, alpha=0.7, label=f'Boundary high ({safe_high})')
+        axs[1].axhline(safe_low, color='tomato', linestyle='--', linewidth=1, alpha=0.7, label=f'Boundary low ({safe_low})')
+    axs[1].axhline(hard_max, color='black', linestyle=':', linewidth=1, alpha=0.5, label=f'Hard max ({hard_max})')
+    axs[1].axhline(hard_min, color='black', linestyle=':', linewidth=1, alpha=0.5, label=f'Hard min ({hard_min})')
     axs[1].set_ylabel('SOC')
     axs[1].set_ylim(0.1, 0.9)
     axs[1].legend(frameon=False, fontsize=8)
@@ -106,7 +109,8 @@ def run_trace(day: int):
     print(f'--- Summary day {day} ---')
     print(f'Total profit     : {profits.sum():.2f}')
     print(f'Peak SOC         : {soc.max():.3f} | Min SOC: {soc.min():.3f}')
-    print(f'Peak violation   : {max(0.0, soc.max() - 0.7) / 0.1: .2f} (if >0, broke boundary high)')
+    margin = max(1e-6, safe_high - safe_low)
+    print(f'Peak violation   : {max(0.0, soc.max() - safe_high) / margin: .2f} (if >0, broke boundary high)')
     print(f'Charge hours     : {[int(h) for h in hours[ch_dch > 0]]}')
     print(f'Discharge hours  : {[int(h) for h in hours[ch_dch < 0]]}')
     print(f'Peak sell hour   : {peak_hour}')
